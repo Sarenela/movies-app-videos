@@ -27,7 +27,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MoviesappTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -44,51 +43,3 @@ fun MainNavigation() {
     NavigationController()
 }
 
-@Composable
-fun MovieList(navController: NavController) {
-    val movies = remember {
-        getBestMovies()
-    }
-
-    LazyColumn {
-        item {
-            Text(
-                text = "All time favorites",
-                style = MaterialTheme.typography.headlineLarge,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            )
-        }
-
-        items(movies) { movie ->
-            ClickableMovieItem(navController, movie = movie)
-        }
-    }
-}
-
-@Composable
-fun ClickableMovieItem(navController: NavController, movie: Movie) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .clickable { navController.navigate("MovieView/${movie.title}") }
-    ) {
-        // You can use Coil or Glide to load images, but for simplicity, I'm using painterResource
-        Image(
-            painter = painterResource(id = movie.cover),
-            contentDescription = null, // TODO: Provide proper content description
-            modifier = Modifier
-                .height(260.dp)
-                .width(180.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(MaterialTheme.colorScheme.primary),
-            contentScale = ContentScale.Crop
-        )
-        Spacer(modifier = Modifier.width(24.dp))
-        Column {
-            Text(text = movie.title, style = MaterialTheme.typography.titleLarge)
-        }
-    }
-}

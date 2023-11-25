@@ -6,7 +6,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-//import app.movies.views.MainView
 import app.movies.views.MovieView
 
 @Composable
@@ -14,7 +13,7 @@ fun NavigationController(){
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "MainView"){
         composable("MainView"){
-            MovieList(navController)
+            MainView(navController)
         }
         composable(
             "MovieView/{title}",
