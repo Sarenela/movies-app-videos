@@ -5,9 +5,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,10 +22,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,21 +31,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import app.movies.Actor
-import app.movies.R
 import app.movies.Movie
 import app.movies.MovieDetails
 import app.movies.MovieViewModel
 import app.movies.getBestMovies
 
 @Composable
-fun MovieView(navController: NavController, viewModel: MovieViewModel = remember { MovieViewModel() }, title: String){
+fun MovieView(navController: NavController, viewModel: MovieViewModel = remember { MovieViewModel() }, title: String) {
 
     if (title == "") {
         navController.popBackStack()
@@ -56,16 +53,27 @@ fun MovieView(navController: NavController, viewModel: MovieViewModel = remember
 
     val movie = getBestMovies().find { it.title == title }
 
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // app.movies.Movie Details Header
-        MovieDetailsHeader(movie!!)
+        MovieTitle(movie!!)
+        // Cover and Description Row
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+        ) {
+            // Movie Cover
+            MovieCover(movie)
 
-        // app.movies.Movie Details Options (Scenes or Actors)
+            // Movie Description
+            MovieDescription(movie)
+        }
+
+
+        // Movie Details Options (Scenes or Actors)
         MovieDetailsOptions(viewModel)
 
         // Display Scenes or Actors based on selection
@@ -77,20 +85,39 @@ fun MovieView(navController: NavController, viewModel: MovieViewModel = remember
 }
 
 @Composable
-fun MovieDetailsHeader(selectedMovie: Movie) {
-    Row(
+fun MovieTitle(movie: Movie) {
+    Text(
+        text = movie.title,
+        style = MaterialTheme.typography.headlineLarge,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        IconButton(onClick = { /* Handle back button click */ }) {
-            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
-        }
-        Text(text = selectedMovie.title, style = MaterialTheme.typography.titleLarge)
-        // Add any other header elements as needed
-    }
+            .padding(8.dp)
+    )
 }
+
+@Composable
+fun MovieCover(movie: Movie) {
+    Image(
+        painter = painterResource(id = movie.cover),
+        contentDescription = movie.title,
+        modifier = Modifier
+            .height(250.dp)
+            .clip(MaterialTheme.shapes.medium),
+        contentScale = ContentScale.Fit
+    )
+}
+
+@Composable
+fun MovieDescription(movie: Movie) {
+    Text(
+        text = movie.description,
+        style = MaterialTheme.typography.bodyMedium,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    )
+}
+
 
 @Composable
 fun MovieDetailsOptions(viewModel: MovieViewModel) {
@@ -117,18 +144,19 @@ fun MovieDetailsOptions(viewModel: MovieViewModel) {
 
 @Composable
 fun MovieDetailsOption(text: String, isSelected: Boolean, onClick: () -> Unit) {
+    val backgroundColor = if (isSelected) pastelColor(MaterialTheme.colorScheme.primary) else pastelColor(MaterialTheme.colorScheme.background)
+
     Box(
         modifier = Modifier
             .clickable { onClick() }
-            .background(
-                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background
-            )
-            .padding(8.dp)
-            .clip(RoundedCornerShape(8.dp))
+            .background(color = backgroundColor)
+            .padding(10.dp)
+            .clip(RoundedCornerShape(10.dp))
     ) {
         Row(
             modifier = Modifier
-                .padding(8.dp),
+                .padding(10.dp)
+                .width(150.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
@@ -137,6 +165,11 @@ fun MovieDetailsOption(text: String, isSelected: Boolean, onClick: () -> Unit) {
     }
 }
 
+@Composable
+private fun pastelColor(color: Color): Color {
+    // You can customize the pastel effect by adjusting the alpha value
+    return color.copy(alpha = 0.5f)
+}
 @Composable
 fun DisplayScenes(scenes: List<Int>) {
     LazyVerticalGrid(columns = GridCells.Fixed(3)) {
@@ -167,14 +200,14 @@ fun DisplayActors(actors: List<Actor>) {
                     painter = painterResource(id = actor.image),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(48.dp)
-                        .clip(RoundedCornerShape(24.dp)),
+                        .size(64.dp)
+                        .clip(RoundedCornerShape(16.dp)),
                     contentScale = ContentScale.Crop
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(20.dp))
                 Text(
                     text = actor.name,
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyLarge
                 )
             }
         }
