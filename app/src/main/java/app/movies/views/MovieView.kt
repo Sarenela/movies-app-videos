@@ -21,7 +21,9 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -57,13 +59,14 @@ fun MovieView(navController: NavController, viewModel: MovieViewModel = remember
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .verticalScroll(rememberScrollState()),
     ) {
         MovieTitle(movie!!)
-        // Cover and Description Row
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp)
+                .padding(top = 8.dp),
         ) {
             // Movie Cover
             MovieCover(movie)
@@ -91,7 +94,7 @@ fun MovieTitle(movie: Movie) {
         style = MaterialTheme.typography.headlineLarge,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(8.dp),
     )
 }
 
@@ -126,9 +129,10 @@ fun MovieDetailsOptions(viewModel: MovieViewModel) {
             .fillMaxWidth()
             .padding(8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
+
     ) {
         MovieDetailsOption(
-            text = "Details",
+            text = "Scenes",
             isSelected = viewModel.selectedMovieDetails == MovieDetails.Scenes
         ) {
             viewModel.setDetailsToScenes()
@@ -172,14 +176,15 @@ private fun pastelColor(color: Color): Color {
 }
 @Composable
 fun DisplayScenes(scenes: List<Int>) {
-    LazyVerticalGrid(columns = GridCells.Fixed(3)) {
+    LazyVerticalGrid(columns = GridCells.Fixed(3),
+        modifier = Modifier.height(280.dp)) {
         items(scenes) { sceneResourceId ->
             Image(
                 painter = painterResource(id = sceneResourceId),
                 contentDescription = null,
                 modifier = Modifier
                     .padding(4.dp)
-                    .size(100.dp)
+                    .size(110.dp)
                     .clip(RoundedCornerShape(8.dp)),
                 contentScale = ContentScale.Crop
             )
@@ -189,7 +194,7 @@ fun DisplayScenes(scenes: List<Int>) {
 
 @Composable
 fun DisplayActors(actors: List<Actor>) {
-    LazyColumn {
+    LazyColumn(modifier = Modifier.height(280.dp)) {
         items(actors) { actor ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -200,7 +205,8 @@ fun DisplayActors(actors: List<Actor>) {
                     painter = painterResource(id = actor.image),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(64.dp)
+                        .height(80.dp)
+                        .width(64.dp)
                         .clip(RoundedCornerShape(16.dp)),
                     contentScale = ContentScale.Crop
                 )
