@@ -3,7 +3,7 @@ package app.movies
 
 data class Actor (val image: Int, val name: String)
 
-data class Movie(val title: String, val description: String, val cover: Int, val cast: List<Actor>, val scenes_images: List<Int>)
+data class Movie(val title: String, val description: String, val cover: Int, val cast: List<Actor>, val scenes_images: List<Int>, val trailers: List<Int>)
 
 fun getBestMovies():List<Movie>{
     return listOf(
@@ -25,7 +25,9 @@ fun getBestMovies():List<Movie>{
                 R.drawable.coraline_scene6,
                 R.drawable.coraline_scene7,
                 R.drawable.coraline_scene8,
-                R.drawable.coraline_scene9)),
+                R.drawable.coraline_scene9),
+            trailers = listOf(
+                R.raw.coraline1)),
         Movie(
             title = "Everything Everywhere all at once",
             description = "Mind-bending science fiction film that follows a seemingly ordinary woman who discovers the existence of parallel universes, propelling her into a cosmic adventure to save her family and the reality itself. The film is known for its inventive storytelling and visually stunning sequences.",
@@ -45,7 +47,9 @@ fun getBestMovies():List<Movie>{
                 R.drawable.everything_scene6,
                 R.drawable.everything_scene7,
                 R.drawable.everything_scene8,
-                R.drawable.everything_scene9,)),
+                R.drawable.everything_scene9,),
+            trailers = listOf(
+                R.raw.everyhing1)),
         Movie(
             title = "Beetlejuice",
             description = "In the quirky fantasy film \"Beetlejuice,\" a recently deceased couple seeks the help of an eccentric ghost, Beetlejuice, to navigate the afterlife. As they grapple with the challenges of the supernatural realm, the film captivates with its offbeat humor and imaginative storytelling. ",
@@ -66,7 +70,9 @@ fun getBestMovies():List<Movie>{
                 R.drawable.beetlejuice_scene6,
                 R.drawable.beetlejuice_scene7,
                 R.drawable.beetlejuice_scene8,
-                R.drawable.beetlejuice_scene9)
+                R.drawable.beetlejuice_scene9),
+            trailers = listOf(
+                R.raw.beetlejuice1)
         )
     )
 }
