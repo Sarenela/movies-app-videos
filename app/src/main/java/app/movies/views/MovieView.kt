@@ -1,5 +1,8 @@
 package app.movies.views
 
+import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,27 +27,35 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import app.movies.Actor
 import app.movies.Movie
 import app.movies.MovieDetails
 import app.movies.MovieViewModel
 import app.movies.getBestMovies
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
 
 @Composable
 fun MovieView(navController: NavController, viewModel: MovieViewModel = remember { MovieViewModel() }, title: String) {
@@ -172,7 +183,6 @@ fun MovieDetailsOption(text: String, isSelected: Boolean, onClick: () -> Unit) {
 
 @Composable
 private fun pastelColor(color: Color): Color {
-    // You can customize the pastel effect by adjusting the alpha value
     return color.copy(alpha = 0.5f)
 }
 @Composable
@@ -222,6 +232,45 @@ fun DisplayActors(actors: List<Actor>) {
 }
 
 @Composable
-fun DisplayClips(Movies: List<Int>){
+fun DisplayClips(movie_clips: List<Int>){
+    val context = LocalContext.current
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
 
+    var player by remember { mutableStateOf<ExoPlayer?>(null) }
+
+    DisposableEffect(context, lifecycle) {
+        player = ExoPlayer.Builder(context).build()
+
+        movie_clips.forEach { movie_clip_id ->
+            val uri = "android.resource://${context.packageName}/${movie_clip_id}"
+            player?.addMediaItem(MediaItem.fromUri(uri))
+        }
+
+        player?.prepare()
+
+        onDispose {
+            player?.release()
+        }
+    }
+    MovieClipView(lifecycle, player)
+}
+@Composable
+fun MovieClipView(lifecycle: Lifecycle, player: ExoPlayer?) {
+    AndroidView(
+        factory = { ctx ->
+            PlayerView(ctx).apply {
+                layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+            }
+        },
+        update = { playerView ->
+            playerView.player = player
+            when (lifecycle.currentState) {
+                Lifecycle.State.STARTED -> player?.play()
+                else -> player?.pause()
+            }
+        },
+        modifier = Modifier
+            .fillMaxSize()
+            .aspectRatio(16 / 9f)
+    )
 }
