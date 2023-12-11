@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 
 enum class MovieDetails{
-    Scenes, Actors
+    Scenes, Actors, MovieClips
 }
 class MovieViewModel : ViewModel() {
     var selectedMovieDetails by mutableStateOf(MovieDetails.Scenes)
@@ -18,6 +18,11 @@ class MovieViewModel : ViewModel() {
     fun setDetailsToActors(){
         selectedMovieDetails = MovieDetails.Actors
     }
+
+    fun setDetailsToMovieClips(){
+        selectedMovieDetails = MovieDetails.MovieClips
+    }
+
 }
 
 

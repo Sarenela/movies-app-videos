@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -52,7 +53,6 @@ fun MovieView(navController: NavController, viewModel: MovieViewModel = remember
         navController.popBackStack()
         return
     }
-
     val movie = getBestMovies().find { it.title == title }
 
     Column(
@@ -68,21 +68,16 @@ fun MovieView(navController: NavController, viewModel: MovieViewModel = remember
                 .fillMaxWidth()
                 .padding(top = 8.dp),
         ) {
-            // Movie Cover
             MovieCover(movie)
-
-            // Movie Description
             MovieDescription(movie)
         }
 
-
-        // Movie Details Options (Scenes or Actors)
         MovieDetailsOptions(viewModel)
 
-        // Display Scenes or Actors based on selection
         when (viewModel.selectedMovieDetails) {
             MovieDetails.Scenes -> DisplayScenes(movie!!.scenes_images)
             MovieDetails.Actors -> DisplayActors(movie!!.cast)
+            MovieDetails.MovieClips -> DisplayClips(movie!!.movie_clips)
         }
     }
 }
@@ -143,6 +138,12 @@ fun MovieDetailsOptions(viewModel: MovieViewModel) {
         ) {
             viewModel.setDetailsToActors()
         }
+        MovieDetailsOption(
+            text = "Clips",
+            isSelected = viewModel.selectedMovieDetails == MovieDetails.MovieClips
+        ) {
+            viewModel.setDetailsToMovieClips()
+        }
     }
 }
 
@@ -160,11 +161,11 @@ fun MovieDetailsOption(text: String, isSelected: Boolean, onClick: () -> Unit) {
         Row(
             modifier = Modifier
                 .padding(10.dp)
-                .width(150.dp),
+                .width(75.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Text(text = text, style = MaterialTheme.typography.bodyMedium)
+            Text(text = text, style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center)
         }
     }
 }
@@ -218,4 +219,9 @@ fun DisplayActors(actors: List<Actor>) {
             }
         }
     }
+}
+
+@Composable
+fun DisplayClips(Movies: List<Int>){
+
 }
